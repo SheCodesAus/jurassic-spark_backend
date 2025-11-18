@@ -36,6 +36,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
+    'playlists.apps.PlaylistsConfig',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
