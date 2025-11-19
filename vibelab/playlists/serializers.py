@@ -45,3 +45,9 @@ class AddPlayListItemSerializer(serializers.Serializer):
 
 
 
+class AddSongSerializer(serializers.Serializer):
+    playlist_id = serializers.UUIDField()
+    spotify_id = serializers.CharField()
+    title = serializers.CharField()
+    artist = serializers.CharField()
+    album = serializers.CharField()
