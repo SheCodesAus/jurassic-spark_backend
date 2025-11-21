@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+
 
 
 class Playlist(models.Model):
@@ -20,6 +20,7 @@ class Playlist(models.Model):
     is_open = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     accessCode = models.CharField(max_length=20, blank=True, null=True)
+    owner = models.ForeignKey(get_user_model(), related_name='playlists', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

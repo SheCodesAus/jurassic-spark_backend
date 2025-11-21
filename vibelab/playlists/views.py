@@ -19,13 +19,12 @@ class HasPlaylistAccess(permissions.BasePermission):
     User must:
     - be the owner OR
     - provide correct accessCode (in header or request.data)
+    - at frontend, we can store the accessCode in localStorage or context after first access
     """
 
     def has_object_permission(self, request, view, playlist: Playlist):
         # 1. Owners always have full access
-        if request.user.is_authenticated and hasattr(playlist, "owner"):
-            # In case you add owner field later
-            if playlist.owner == request.user:
+        if request.user.is_authenticated and playlist.owner == request.user:
                 return True
 
         # 2. Accept accessCode from header OR request body
@@ -163,7 +162,7 @@ class DeletePlaylistItemAPIView(APIView):
     """
     Only playlist owner can delete a song from playlist.
     """
-    permission_classes = [permissions.IsAuthenticated]  # must be logged in
+    permission_classes = [IsPlaylistOwner]  # must be logged in
 
     def delete(self, request, item_id):
         item = get_object_or_404(PlayListItem, id=item_id)

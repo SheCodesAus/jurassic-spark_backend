@@ -4,7 +4,6 @@ from .models import Playlist, Song, PlayListItem
 
 
 
-
 # --- Song Serializer ---
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,17 +18,18 @@ class PlayListItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlayListItem
-        fields = ['id', 'song', 'likes', 'added_at']
+        fields = '__all__'
 
 
 
 # --- Playlist Serializer (with nested playlist items) ---
 class PlaylistSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.id')
     items = PlayListItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Playlist
-        fields = ['id', 'name', 'description', 'vibe', 'is_open', 'accessCode', 'date_created', 'items']
+        fields = '__all__'
 
 
 
