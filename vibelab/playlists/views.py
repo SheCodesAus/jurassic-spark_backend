@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from playlists.models import Playlist, PlayListItem, Song
 from playlists.serializers import (
@@ -175,3 +177,27 @@ class DeletePlaylistItemAPIView(APIView):
 
         item.delete()
         return Response({"detail": "Song deleted from playlist."}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_share_link(request, playlist_id):
+    """
+    Generates a share link (token) for the playlist. Only the owner can generate the link.
+    """
+    playlist = get_object_or_404(Playlist, id=playlist_id, owner=request.user)
+    
+    # Generate a new share token
+    playlist.generate_share_token()
+
+    share_url =f"https://vibelab.netlify.app/share/{playlist.share_token}"
+
+    return Response({"share_url": share_url})
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_shared_playlist(request, token):
+    """Anyone with the share token can access the playlist."""
+    playlist = get_object_or_404(Playlist, share_token=token)
+
+    serializer = PlaylistSerializer(playlist)
+    return Response(serializer.data)

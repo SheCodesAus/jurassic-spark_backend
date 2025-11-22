@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
+import secrets
 
 User = get_user_model()
 
@@ -21,6 +22,19 @@ class Playlist(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     accessCode = models.CharField(max_length=20, blank=True, null=True)
     owner = models.ForeignKey(get_user_model(), related_name='playlists', on_delete=models.CASCADE)
+
+    ##private code for locked playlists
+    accessCode = models.CharField(max_length=20, blank=True, null=True)
+    
+    ##token used for sharing
+    share_token = models.CharField(max_length=50, blank=True, null=True, unique=True)
+
+    owner = models.ForeignKey(get_user_model(), related_name='playlists', on_delete=models.CASCADE)
+
+    def generate_share_token(self):
+        ##Use this method when user clicks 'Share'.
+        self.share_token = secrets.token_urlsafe(16)
+        self.save()
 
     def __str__(self):
         return self.name
