@@ -178,6 +178,11 @@ class DeletePlaylistItemAPIView(APIView):
         item.delete()
         return Response({"detail": "Song deleted from playlist."}, status=status.HTTP_204_NO_CONTENT)
 
+
+#--------------------------------------------------
+# Share Playlist via Token
+#--------------------------------------------------
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_share_link(request, playlist_id):
