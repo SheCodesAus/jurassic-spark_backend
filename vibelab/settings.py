@@ -26,14 +26,11 @@ load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = 'django-insecure-bhm!i4t8kv6%r$4@!##(&amp;8-#6v&amp;7jgz+k0(&amp;pggcyf1&amp;jsvi_4'
-DEBUG = True
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
 
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 # configure allowed hosts and CORS, for development purpose, allow all
 ALLOWED_HOSTS = ['*'] #any host like blah.com
@@ -45,7 +42,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'playlists.apps.PlaylistsConfig',
-    'vibelab.spotify.apps.SpotifyConfig',
+    'spotify.apps.SpotifyConfig',
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',
@@ -92,12 +89,14 @@ WSGI_APPLICATION = 'vibelab.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
 
 
 # Password validation
