@@ -29,7 +29,13 @@ class Playlist(models.Model):
     ##token used for sharing
     share_token = models.CharField(max_length=50, blank=True, null=True, unique=True)
 
-    owner = models.ForeignKey(get_user_model(), related_name='playlists', on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        get_user_model(), 
+        related_name='playlists', 
+        on_delete=models.CASCADE,
+        null=True,    # ← add temporarily
+        blank=True
+        )
 
     def generate_share_token(self):
         ##Use this method when user clicks 'Share'.

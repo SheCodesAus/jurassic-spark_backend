@@ -67,7 +67,7 @@ class PlaylistListAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PlaylistSerializer(data=request.data)
+        serializer = PlaylistSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             playlist = serializer.save(owner=request.user)  # requires owner field in Playlist model
             return Response(
