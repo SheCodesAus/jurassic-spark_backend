@@ -136,3 +136,27 @@ Thumbs.db
 .vscode/
 !.vscode/settings.json
 !.vscode/extensions.json
+
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+# Django
+staticfiles/
+media/
+*.log
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env__pycache__/
+*.pyc
+*.sqlite3
+venv/
+staticfiles/
