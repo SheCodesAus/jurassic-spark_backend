@@ -10,20 +10,27 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+
 from pathlib import Path
 import os
-import dj_database_url
 from dotenv import load_dotenv
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Explicitly load .env from the project root (same folder as manage.py)
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bhm!i4t8kv6%r$4@!##(&8-#6v&7jgz+k0(&pggcyf1&jsvi_4'
+
+SECRET_KEY = 'django-insecure-bhm!i4t8kv6%r$4@!##(&amp;8-#6v&amp;7jgz+k0(&amp;pggcyf1&amp;jsvi_4'
+DEBUG = True
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +45,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'playlists.apps.PlaylistsConfig',
+    'vibelab.spotify.apps.SpotifyConfig',
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',
@@ -138,6 +146,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }

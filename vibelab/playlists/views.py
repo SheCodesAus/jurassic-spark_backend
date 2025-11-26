@@ -67,7 +67,7 @@ class PlaylistListAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PlaylistSerializer(data=request.data)
+        serializer = PlaylistSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             playlist = serializer.save(owner=request.user)  # requires owner field in Playlist model
             return Response(
@@ -177,6 +177,11 @@ class DeletePlaylistItemAPIView(APIView):
 
         item.delete()
         return Response({"detail": "Song deleted from playlist."}, status=status.HTTP_204_NO_CONTENT)
+
+
+#--------------------------------------------------
+# Share Playlist via Token
+#--------------------------------------------------
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
