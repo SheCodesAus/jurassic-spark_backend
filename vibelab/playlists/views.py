@@ -25,7 +25,7 @@ class HasPlaylistAccess(permissions.BasePermission):
     - at frontend, we can store the accessCode in localStorage or context after first access
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request,  obj):
 
         # obj must be a Playlist
         if not isinstance(obj, Playlist):
@@ -128,7 +128,7 @@ class PlaylistDetailAPIView(APIView):
 # --------------------------------------------------
 
 class AddPlaylistItemAPIView(APIView):
-    permission_classes = []
+    permission_classes = [HasPlaylistAccess]
 
     def post(self, request):
         # Validate request body
