@@ -181,7 +181,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **1. Create Playlist**
 
-**POST /api/playlists/**
+**POST http://127.0.0.1:8000/api/playlists/**
 
 **Request (JSON)**
 
@@ -214,7 +214,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **2. Get Playlist Details**
 
-**GET /api/playlists/playlist_id/**
+**GET http://127.0.0.1:8000/api/playlists/playlist_id/**
 (Owner OR user with correct accessCode)
 
 (accessCode can be passed as header or in request body or in query params way)
@@ -252,7 +252,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **3. Update Playlist (Owner Only)**
 
-**PUT /api/playlists/playlist_id/**
+**PUT http://127.0.0.1:8000/api/playlists/playlist_id/**
 
 **Request (JSON)**
 
@@ -280,7 +280,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **4. Delete Playlist (Owner Only)**
 
-**DELETE /api/playlists/playlist_id/**
+**DELETE http://127.0.0.1:8000/api/playlists/playlist_id/**
 
 **Response (204)**
 
@@ -328,7 +328,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **6. Delete Playlist Item (Owner Only)**
 
-**DELETE /api/playlists/playlist-items/playlist_id/delete/**
+**DELETE http://127.0.0.1:8000/api/playlists/playlist-items/playlist_id/delete/**
 
 **Response (204)**
 
@@ -340,7 +340,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **7. Generate Share Link (Owner Only)**
 
-**POST /api/playlists/uuid:playlist_id/share/**
+**POST http://127.0.0.1:8000/api/playlists/uuid:playlist_id/share/**
 
 **Response (200)**
 
@@ -352,7 +352,7 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 
 **8. Access Shared Playlist (Public)**
 
-**GET /api/playlists/shared/<token>/**
+**GET `http://127.0.0.1:8000/api/playlists/shared/<token>/`**
 
 **Response (200)**
 
