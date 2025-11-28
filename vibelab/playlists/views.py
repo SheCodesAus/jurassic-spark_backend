@@ -25,9 +25,14 @@ class HasPlaylistAccess(permissions.BasePermission):
     - at frontend, we can store the accessCode in localStorage or context after first access
     """
 
-    def has_object_permission(self, request, view, playlist: Playlist):
+    def has_object_permission(self, request,  obj):
+
+        # obj must be a Playlist
+        if not isinstance(obj, Playlist):
+            return False
+
         # 1. Owners always have full access
-        if request.user.is_authenticated and playlist.owner == request.user:
+        if request.user.is_authenticated and obj.owner == request.user:
                 return True
 
         # 2. Accept accessCode from header OR request body
@@ -37,7 +42,7 @@ class HasPlaylistAccess(permissions.BasePermission):
             or request.query_params.get("accessCode")  # GET support
         )
 
-        if provided_code and provided_code == playlist.accessCode:
+        if provided_code and provided_code == obj.accessCode:
             return True
 
         return False

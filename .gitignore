@@ -13,6 +13,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*/migrations/__pycache__/
 
 # Django
 *.sqlite3
