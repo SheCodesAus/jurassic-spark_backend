@@ -7,6 +7,11 @@ from .views import (
     generate_share_link,
     get_shared_playlist,
 )
+from playlists.views import generate_share_link, get_shared_playlist
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('', PlaylistListAPIView.as_view()),
