@@ -25,7 +25,7 @@ class HasPlaylistAccess(permissions.BasePermission):
     - at frontend, we can store the accessCode in localStorage or context after first access
     """
 
-    def has_object_permission(self, request,  obj):
+    def has_object_permission(self, request, view, obj):
 
         # obj must be a Playlist
         if not isinstance(obj, Playlist):
@@ -67,9 +67,16 @@ class PlaylistListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request):
+
+        # return Response(
+        #     {"detail": "Listing all playlists is not allowed."},
+        #     status=status.HTTP_403_FORBIDDEN
+        # )
+
         playlists = Playlist.objects.filter(is_open=False)  # all private, but viewable only by accessCode individually
         serializer = PlaylistSerializer(playlists, many=True)
         return Response(serializer.data)
+
 
     def post(self, request):
         serializer = PlaylistSerializer(data=request.data, context={'request': request})
