@@ -13,10 +13,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Explicitly load .env from the project root (same folder as manage.py)
@@ -28,12 +32,16 @@ load_dotenv(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = 'django-insecure-bhm!i4t8kv6%r$4@!##(&amp;8-#6v&amp;7jgz+k0(&amp;pggcyf1&amp;jsvi_4'
-DEBUG = True
-
+# SECRET_KEY = 'django-insecure-bhm!i4t8kv6%r$4@!##(&amp;8-#6v&amp;7jgz+k0(&amp;pggcyf1&amp;jsvi_4'
+SECRET_KEY = os.environ.get(
+'DJANGO_SECRET_KEY',
+'<your-secret-key>'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get(
+'DJANGO_DEBUG'
+) != 'False'
 
 # configure allowed hosts and CORS, for development purpose, allow all
 ALLOWED_HOSTS = ['*'] #any host like blah.com
@@ -57,9 +65,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,6 +107,8 @@ DATABASES = {
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

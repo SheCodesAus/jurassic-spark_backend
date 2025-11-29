@@ -162,20 +162,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-
-#Python cache
-__pycache__/
-*.__pycache__
-
-#Django local database
-db.sqlite3
-
-#Virtual environments
-venv/
-.venv/
-
-#Django static and media 
-staticfiles/
-media/
-
-
