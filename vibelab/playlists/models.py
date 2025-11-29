@@ -7,12 +7,12 @@ User = get_user_model()
 
 class Playlist(models.Model):
     class VibeChoices(models.TextChoices):
-        POP = 'POP', 'Pop'
-        ROCK = 'ROCK', 'Rock'
-        LATIN = 'LATIN', 'Latin'
-        COUNTRY = 'COUNTRY', 'Country'
-        TECHNO = 'TECHNO', 'Techno'
-        RNBSOUL = 'RNB/SOUL', 'R&B/Soul'
+        POP = 'Pop', 'Pop'
+        ROCK = 'Rock', 'Rock'
+        LATIN = 'Latin', 'Latin'
+        COUNTRY = 'Country', 'Country'
+        TECHNO = 'Techno', 'Techno'
+        RNBSOUL = 'RNBSoul', 'RNBSoul'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
     name = models.CharField(max_length=200)
@@ -20,22 +20,14 @@ class Playlist(models.Model):
     vibe = models.CharField(max_length=10, choices=VibeChoices.choices, default=VibeChoices.POP)
     is_open = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
-    accessCode = models.CharField(max_length=20, blank=True, null=True)
     owner = models.ForeignKey(get_user_model(), related_name='playlists', on_delete=models.CASCADE)
 
     ##private code for locked playlists
     accessCode = models.CharField(max_length=20, blank=True, null=True)
-    
     ##token used for sharing
     share_token = models.CharField(max_length=50, blank=True, null=True, unique=True)
 
-    owner = models.ForeignKey(
-        get_user_model(), 
-        related_name='playlists', 
-        on_delete=models.CASCADE,
-        null=True,    # ← add temporarily
-        blank=True
-        )
+  
 
     def generate_share_token(self):
         ##Use this method when user clicks 'Share'.
@@ -64,6 +56,7 @@ class Song(models.Model):
 
 
 class PlayListItem(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     playlist = models.ForeignKey(Playlist, related_name='items', on_delete=models.CASCADE)
     song = models.ForeignKey(Song, related_name='playlist_items', on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)

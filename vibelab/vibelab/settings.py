@@ -45,7 +45,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'playlists.apps.PlaylistsConfig',
-    'vibelab.spotify.apps.SpotifyConfig',
+    # 'vibelab.spotify.apps.SpotifyConfig',
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',
