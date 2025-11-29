@@ -1,2 +1,2 @@
-release: python crowdfunding/manage.py migrate
-web: gunicorn --pythonpath crowdfunding crowdfunding.wsgi --log-file -
+release: python vibelab/manage.py migrate
+web: gunicorn --pythonpath vibelab vibelab.wsgi --log-file -
