@@ -74,6 +74,7 @@ class PlaylistListAPIView(APIView):
         # )
 
         playlists = Playlist.objects.filter(is_open=False)  # all private, but viewable only by accessCode individually
+        # playlists = Playlist.objects.filter(owner=request.user) #if playlists are private-only, you should not list them at all unless owner.
         serializer = PlaylistSerializer(playlists, many=True)
         return Response(serializer.data)
 
@@ -206,15 +207,19 @@ def generate_share_link(request, playlist_id):
     # Generate a new share token
     playlist.generate_share_token()
 
-    share_url =f"https://vibelab.netlify.app/share/{playlist.share_token}"
+    share_url = f"https://vibelab.netlify.app/share/{playlist.id}/{playlist.share_token}"
 
     return Response({"share_url": share_url})
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def get_shared_playlist(request, token):
+def get_shared_playlist(request, id, token):
+    # id = request.id
+    # token = request.token
     """Anyone with the share token can access the playlist."""
-    playlist = get_object_or_404(Playlist, share_token=token)
+    # playlists = Playlist.objects.filter(is_open=False, pk=id,share_token=request.token) 
+    # serializer = PlaylistSerializer(playlists, many=True)
+    playlist = get_object_or_404(Playlist, id=id, share_token=token)
 
     serializer = PlaylistSerializer(playlist)
     return Response(serializer.data)

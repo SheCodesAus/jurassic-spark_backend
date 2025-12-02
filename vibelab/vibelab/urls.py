@@ -29,5 +29,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/playlists/', include('playlists.urls')),
     path('playlists/<uuid:playlist_id>/share/', generate_share_link),
-    path('shared/<str:token>/', get_shared_playlist), 
+    path('share/<uuid:id>/<str:token>/', get_shared_playlist),
 ]
