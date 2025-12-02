@@ -17,6 +17,7 @@ from playlists.serializers import (
 # Custom Permissions
 # --------------------------------------------------
 
+
 class HasPlaylistAccess(permissions.BasePermission):
     """
     User must:
@@ -26,14 +27,13 @@ class HasPlaylistAccess(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-
         # obj must be a Playlist
         if not isinstance(obj, Playlist):
             return False
 
         # 1. Owners always have full access
         if request.user.is_authenticated and obj.owner == request.user:
-                return True
+            return True
 
         # 2. Accept accessCode from header OR request body
         provided_code = (
@@ -63,29 +63,31 @@ class IsPlaylistOwner(permissions.BasePermission):
 # Playlist List + Create
 # --------------------------------------------------
 
+
 class PlaylistListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-
         # return Response(
         #     {"detail": "Listing all playlists is not allowed."},
         #     status=status.HTTP_403_FORBIDDEN
         # )
 
-        playlists = Playlist.objects.filter(is_open=False)  # all private, but viewable only by accessCode individually
+        playlists = Playlist.objects.filter(
+            is_open=False
+        )  # all private, but viewable only by accessCode individually
         # playlists = Playlist.objects.filter(owner=request.user) #if playlists are private-only, you should not list them at all unless owner.
         serializer = PlaylistSerializer(playlists, many=True)
         return Response(serializer.data)
 
-
     def post(self, request):
-        serializer = PlaylistSerializer(data=request.data, context={'request': request})
+        serializer = PlaylistSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            playlist = serializer.save(owner=request.user)  # requires owner field in Playlist model
+            playlist = serializer.save(
+                owner=request.user
+            )  # requires owner field in Playlist model
             return Response(
-                PlaylistSerializer(playlist).data,
-                status=status.HTTP_201_CREATED
+                PlaylistSerializer(playlist).data, status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -93,6 +95,7 @@ class PlaylistListAPIView(APIView):
 # --------------------------------------------------
 # Playlist Detail (requires accessCode or owner)
 # --------------------------------------------------
+
 
 class PlaylistDetailAPIView(APIView):
     permission_classes = [HasPlaylistAccess]
@@ -135,6 +138,7 @@ class PlaylistDetailAPIView(APIView):
 # Add Song to Playlist (requires accessCode or owner)
 # --------------------------------------------------
 
+
 class AddPlaylistItemAPIView(APIView):
     permission_classes = [HasPlaylistAccess]
 
@@ -158,26 +162,22 @@ class AddPlaylistItemAPIView(APIView):
                 "title": serializer.validated_data["title"],
                 "artist": serializer.validated_data["artist"],
                 "album": serializer.validated_data["album"],
-            }
+            },
         )
 
         # Create playlist item
-        item, _ = PlayListItem.objects.get_or_create(
-            playlist=playlist,
-            song=song
-        )
+        item, _ = PlayListItem.objects.get_or_create(playlist=playlist, song=song)
 
         return Response(
-            PlayListItemSerializer(item).data,
-            status=status.HTTP_201_CREATED
+            PlayListItemSerializer(item).data, status=status.HTTP_201_CREATED
         )
-
 
 
 class DeletePlaylistItemAPIView(APIView):
     """
     Only playlist owner can delete a song from playlist.
     """
+
     permission_classes = [IsPlaylistOwner]  # must be logged in
 
     def delete(self, request, item_id):
@@ -186,40 +186,96 @@ class DeletePlaylistItemAPIView(APIView):
 
         # Check owner permission
         if playlist.owner != request.user:
-            return Response({"detail": "Not allowed."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "Not allowed."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         item.delete()
-        return Response({"detail": "Song deleted from playlist."}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"detail": "Song deleted from playlist."}, status=status.HTTP_204_NO_CONTENT
+        )
 
 
-#--------------------------------------------------
-# Share Playlist via Token
-#--------------------------------------------------
+# --------------------------------------------------
+# Share Playlist (accessCode protected)
+# --------------------------------------------------
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def generate_share_link(request, playlist_id):
     """
-    Generates a share link (token) for the playlist. Only the owner can generate the link.
+    Owner generates a new share token.
+    Shared link example:
+    https://vibelab.netlify.app/share/<share_token>
     """
     playlist = get_object_or_404(Playlist, id=playlist_id, owner=request.user)
-    
-    # Generate a new share token
     playlist.generate_share_token()
 
-    share_url = f"https://vibelab.netlify.app/share/{playlist.id}/{playlist.share_token}"
-
+    share_url = f"https://vibelab.netlify.app/share/{playlist.share_token}"
     return Response({"share_url": share_url})
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_shared_playlist(request, id, token):
-    # id = request.id
-    # token = request.token
-    """Anyone with the share token can access the playlist."""
-    # playlists = Playlist.objects.filter(is_open=False, pk=id,share_token=request.token) 
-    # serializer = PlaylistSerializer(playlists, many=True)
-    playlist = get_object_or_404(Playlist, id=id, share_token=token)
 
-    serializer = PlaylistSerializer(playlist)
-    return Response(serializer.data)
+# --------------------------------------------------
+# STEP 1 — Get playlist info
+# --------------------------------------------------
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_shared_playlist(request, token):
+    """
+    Returns ONLY minimal data so the frontend knows:
+    - playlist exists
+    - password is required
+    NO playlist content is exposed.
+    """
+    playlist = get_object_or_404(Playlist, share_token=token)
+
+    return Response(
+        {
+            # "playlist_id": str(playlist.id), --optional if we want to display
+            "requires_password": True,
+        }
+    )
+
+
+# @api_view(['GET'])
+# @permission_classes([AllowAny])
+# def get_shared_playlist(request, id, accessCode):
+#     # id = request.id
+#     # accessCode = request.accessCode
+#     """Anyone with the share accessCode can access the playlist."""
+#     # playlists = Playlist.objects.filter(is_open=False, pk=id,share_token=request.accessCode)
+#     # serializer = PlaylistSerializer(playlists, many=True)
+#     playlist = get_object_or_404(Playlist, id=id, share_token=accessCode)
+
+#     serializer = PlaylistSerializer(playlist)
+#     return Response(serializer.data)
+
+# --------------------------------------------------
+# STEP 2 — Validate password
+# --------------------------------------------------
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def validate_access_code(request):
+    """
+    Validate password before returning playlist.
+    Input:
+    { "share_token": "...", "accessCode": "..." }
+    """
+    token = request.data.get("share_token")
+    code = request.data.get("accessCode")
+
+    if not token or not code:
+        return Response({"detail": "share_token and accessCode required"}, status=400)
+
+    playlist = get_object_or_404(Playlist, share_token=token)
+
+    if playlist.accessCode != code:
+        return Response({"detail": "Invalid password"}, status=400)
+
+    # Password valid → return FULL playlist
+    return Response(PlaylistSerializer(playlist).data)
