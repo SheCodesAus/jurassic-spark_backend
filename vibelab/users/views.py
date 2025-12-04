@@ -19,6 +19,21 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
+
+class CheckUsernameView(generics.RetrieveAPIView):
+   
+    def get(self, request, *args, **kwargs):
+        username = request.GET.get("username", "")
+
+        if not username:
+            return Response({"error": "Username is required"}, status=400)
+
+        exists = User.objects.filter(username=username).exists()
+
+        return Response({"exists": exists})
+
+
+
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
