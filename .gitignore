@@ -9,11 +9,11 @@ Thumbs.db
 !.vscode/extensions.json
 
 # Python
-# __pycache__/
-# *.pyc
-# *.pyo
-# *.pyd
-# */migrations/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*/migrations/__pycache__/
 
 # Django
 *.sqlite3
