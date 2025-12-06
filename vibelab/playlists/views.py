@@ -234,7 +234,9 @@ def get_shared_playlist(request, token):
 
     return Response(
         {
-            # "playlist_id": str(playlist.id), --optional if we want to display
+            "id": str(playlist.id),
+            "title": playlist.title,  # ✅ playlist name
+            "creator": playlist.owner.username,  # ✅ playlist creator
             "requires_password": True,
         }
     )
