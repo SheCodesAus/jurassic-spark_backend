@@ -28,10 +28,4 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/playlists/', include('playlists.urls')),
-    path('playlists/<uuid:playlist_id>/generate-share-link/', generate_share_link),
-    path('share/<str:token>/', get_shared_playlist),
-    path('share/validate/', validate_access_code),
-    path('api/share/validate/', validate_access_code), #just to test password in the backend
-    # path('playlists/<uuid:playlist_id>/share/', generate_share_link),
-    # path('share/<uuid:id>/<str:accessCode>/', get_shared_playlist),
 ]

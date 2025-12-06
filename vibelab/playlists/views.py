@@ -210,6 +210,11 @@ def generate_share_link(request, playlist_id):
     https://vibelab.netlify.app/share/<share_token>
     """
     playlist = get_object_or_404(Playlist, id=playlist_id, owner=request.user)
+
+    access_code = request.data.get("accessCode")
+    if access_code:
+        playlist.accessCode = access_code
+
     playlist.generate_share_token()
 
     share_url = f"https://vibelab.netlify.app/share/{playlist.share_token}"
@@ -235,7 +240,7 @@ def get_shared_playlist(request, token):
     return Response(
         {
             "id": str(playlist.id),
-            "title": playlist.title,  # ✅ playlist name
+            "title": playlist.name,  # ✅ playlist name
             "creator": playlist.owner.username,  # ✅ playlist creator
             "requires_password": True,
         }
