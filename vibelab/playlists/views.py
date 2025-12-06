@@ -68,17 +68,18 @@ class PlaylistListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-        return Response(
-            {"detail": "Listing all playlists is not allowed."},
-            status=status.HTTP_403_FORBIDDEN
-        )
+        # return Response(
+        #     {"detail": "Listing all playlists is not allowed."},
+        #     status=status.HTTP_403_FORBIDDEN
+        # )
 
         # playlists = Playlist.objects.filter(
         #     is_open=False
         # )  # all private, but viewable only by accessCode individually
-        # # playlists = Playlist.objects.filter(owner=request.user) #if playlists are private-only, you should not list them at all unless owner.
-        # serializer = PlaylistSerializer(playlists, many=True)
-        # return Response(serializer.data)
+        
+        playlists = Playlist.objects.filter(owner=request.user) #if playlists are private-only, you should not list them at all unless owner.
+        serializer = PlaylistSerializer(playlists, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = PlaylistSerializer(data=request.data, context={"request": request})
