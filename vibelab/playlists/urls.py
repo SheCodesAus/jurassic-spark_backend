@@ -20,10 +20,7 @@ urlpatterns = [
     path('playlist-items/add/', AddPlaylistItemAPIView.as_view()),
     path('playlist-items/<uuid:item_id>/delete/', DeletePlaylistItemAPIView.as_view()),
     #Share link routes:
-    path('playlists/<uuid:playlist_id>/generate-share-link/', generate_share_link),
-    path('share/<str:token>/', get_shared_playlist),
+    path('<uuid:playlist_id>/generate-share-link/', generate_share_link),
     path('share/validate/', validate_access_code),
-    path('api/share/validate/', validate_access_code), #just to test password in the backend
-    # path('playlists/<uuid:playlist_id>/share/', generate_share_link),
-    # path('share/<uuid:id>/<str:accessCode>/', get_shared_playlist),
+    path('share/<str:token>/', get_shared_playlist),
 ]
