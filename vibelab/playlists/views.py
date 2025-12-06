@@ -92,6 +92,30 @@ class PlaylistListAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+# --------------------------------------------------
+# All the playlists created by user (owner only)
+# --------------------------------------------------
+
+class UserPlaylistsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        # Only allow the owner to view their playlists
+        if request.user.id != user_id:
+            return Response(
+                {"detail": "Not allowed."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        playlists = Playlist.objects.filter(owner_id=user_id)
+        serializer = PlaylistSerializer(playlists, many=True)
+        return Response(serializer.data)
+
+
+
+
+
 # --------------------------------------------------
 # Playlist Detail (requires accessCode or owner)
 # --------------------------------------------------
