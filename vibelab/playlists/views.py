@@ -1,3 +1,6 @@
+import requests
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -279,3 +282,37 @@ def validate_access_code(request):
 
     # Password valid → return FULL playlist
     return Response(PlaylistSerializer(playlist).data)
+
+
+User = get_user_model()
+SPOTIFY_ME_URL = "https://api.spotify.com/v1/me"
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def spotify_login(request):
+    """
+    Accepts a Spotify access_token from frontend, verifies it,
+    creates or retrieves a Django user, and returns JWT.
+    """
+    access_token = request.data.get("access_token")
+    if not access_token:
+        return Response({"detail": "access_token required"}, status=400)
+
+    # Verify Spotify token by fetching user profile
+    resp = requests.get(SPOTIFY_ME_URL, headers={"Authorization": f"Bearer {access_token}"})
+    if resp.status_code != 200:
+        return Response({"detail": "Invalid Spotify token"}, status=400)
+
+    spotify_data = resp.json()
+    spotify_id = spotify_data["id"]
+    email = spotify_data.get("email") or f"{spotify_id}@spotify.fake"
+
+    # Get or create a Django user
+    user, _ = User.objects.get_or_create(
+        username=f"spotify_{spotify_id}",
+        defaults={"email": email, "password": User.objects.make_random_password()},
+    )
+
+    # Generate JWT tokens
+    refresh = RefreshToken.for_user(user)
+    return Response({"access": str(refresh.access_token), "refresh": str(refresh)})

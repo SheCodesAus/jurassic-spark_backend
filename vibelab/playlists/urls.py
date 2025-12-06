@@ -6,13 +6,12 @@ from .views import (
     DeletePlaylistItemAPIView,
     generate_share_link,
     get_shared_playlist,
-    validate_access_code
+    validate_access_code,
+    spotify_login
 )
 from playlists.views import generate_share_link, get_shared_playlist, validate_access_code
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
     path('', PlaylistListAPIView.as_view()),
@@ -26,4 +25,5 @@ urlpatterns = [
     path('api/share/validate/', validate_access_code), #just to test password in the backend
     # path('playlists/<uuid:playlist_id>/share/', generate_share_link),
     # path('share/<uuid:id>/<str:accessCode>/', get_shared_playlist),
+    path("token/spotify/", spotify_login),
 ]

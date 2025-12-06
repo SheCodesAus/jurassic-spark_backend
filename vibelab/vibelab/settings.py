@@ -45,8 +45,13 @@ DEBUG = os.environ.get(
 
 # configure allowed hosts and CORS, for development purpose, allow all
 ALLOWED_HOSTS = ['*'] #any host like blah.com
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+]
 
 # Application definition
 
@@ -161,3 +166,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 }
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = False   # True only in HTTPS production
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = False
