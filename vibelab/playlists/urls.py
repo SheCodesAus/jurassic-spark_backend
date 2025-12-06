@@ -4,7 +4,6 @@ from .views import (
     PlaylistDetailAPIView,
     AddPlaylistItemAPIView,
     DeletePlaylistItemAPIView,
-    UserPlaylistsAPIView,
     generate_share_link,
     get_shared_playlist,
     validate_access_code
@@ -20,7 +19,6 @@ urlpatterns = [
     path('<uuid:pk>/', PlaylistDetailAPIView.as_view()),
     path('playlist-items/add/', AddPlaylistItemAPIView.as_view()),
     path('playlist-items/<uuid:item_id>/delete/', DeletePlaylistItemAPIView.as_view()),
-    path("users/<int:user_id>/playlists/", UserPlaylistsAPIView.as_view(), name="user-playlists"),
     #Share link routes:
     path('<uuid:playlist_id>/generate-share-link/', generate_share_link),
     path('share/validate/', validate_access_code),
