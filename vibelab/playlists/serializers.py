@@ -24,12 +24,22 @@ class PlayListItemSerializer(serializers.ModelSerializer):
 
 # --- Playlist Serializer (with nested playlist items) ---
 class PlaylistSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.id')
+    owner = serializers.SerializerMethodField()
     items = PlayListItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Playlist
         fields = '__all__'
+
+    def get_owner(self, obj):
+        if obj.owner:
+            return {
+                "id": obj.owner.id,
+                "username": obj.owner.username,
+                "first_name": obj.owner.first_name,
+                "last_name": obj.owner.last_name,
+            }
+        return None    
 
 
 
