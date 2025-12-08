@@ -218,7 +218,7 @@ def generate_share_link(request, playlist_id):
 
     playlist.generate_share_token()
 
-    share_url = f"https://vibelab.netlify.app/share/{playlist.share_token}"
+    share_url = f"https://vibelabmusic.netlify.app/share/{playlist.share_token}"
     return Response({"share_url": share_url})
 
 
